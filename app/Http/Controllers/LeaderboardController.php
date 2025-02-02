@@ -64,11 +64,11 @@ class LeaderboardController extends Controller
 
         // $leaderboard = $query->orderByDesc('total_points')->get();
         $leaderboard = $query->orderByDesc('total_points')->paginate(10);
-        // dd($leaderboard);
+        // dd($leaderboard->firstItem());
         $rank = 1;
         $previous_points = null;
 
-        $leaderboard = $leaderboard->map(function ($user) use (&$rank, &$previous_points) {
+        $leaderboard->getCollection()->transform(function ($user) use (&$rank, &$previous_points) {
             if ($previous_points !== $user->total_points) {
                 $user->rank = $rank;
                 $rank++;
@@ -78,7 +78,7 @@ class LeaderboardController extends Controller
             $previous_points = $user->total_points;
             return $user;
         });
-        
+        // dd($leaderboard->firstItem());
         return view('leaderboard', compact('leaderboard', 'filter', 'search'));
     }
 
